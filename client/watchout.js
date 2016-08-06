@@ -57,14 +57,31 @@ var Player = function () {
 /****************** ADD PLAYER TO THE BOARD ***********************/
 var mouseArray = [new Player ()];
 // console.log(mouse);
-var drag = d3.behavior.drag()
-            .on("drag", function(d) {
-              d.x += d3.event.dx;
-              d.y += d3.event.dy;
-              d3.select(this).attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-              });
-            });
+// var dragStart = d3.classed
+
+// var drag = d3.behavior.drag()
+//             .on("drag", function(d) {
+//               // d.x += d3.event.dx;
+//               // d.y += d3.event.dy;
+//               // d.x = d3.event.dx;
+//               // d.y = d3.event.dy;
+//               //d.x += d3.mouse(this)[0];
+//               // if d.x becomes less than 0
+//                 // set d.x to zero
+//               d.x < 0 ? 0 : d.x += d3.mouse(this)[0];
+//               // else if d.x is greater than 700
+//                 // set d.x to 700
+//               d.x > 700 ? 700 : d.x += d3.mouse(this)[0];
+
+//               //d.y += d3.mouse(this)[1];
+//               d.y < 0 ? 0 : d.y += d3.mouse(this)[1];
+//               d.y > 450 ? 450 : d.y += d3.mouse(this)[1];
+//               d3.select(this).attr("transform", function(d) {
+//                 return "translate(" + d.x + "," + d.y + ")";
+//               });
+//             });
+
+
 
 d3.selectAll(".mouse").selectAll("circle")
   .data(mouseArray)
@@ -72,16 +89,37 @@ d3.selectAll(".mouse").selectAll("circle")
   .append("circle")
   // .attr('d', function(d) { return d.path; })
   // .attr('view-box', function(d) { return d.x+d.y 0 0});
-  // .attr('cx', function(d) { return d.x; })
-  // .attr('cy', function(d) { return d.y; })
+  .attr('cx', function(d) { return d.x; })
+  .attr('cy', function(d) { return d.y; });
   // .attr("transform", "translate ( 350, 400 )" )
-  .attr("transform", function(d) { return "translate (" + [d.x, d.y] + ")"; })
-  .call(drag);
+  // .attr("transform", function(d) { return "translate (" + [d.x, d.y] + ")"; })
+  // .call(drag);
 // ;
 
 // DRAG FUNCTION
 // d3.select(".mouse").select("circle").call()
 
+d3.selectAll(".mouse").selectAll("circle")
+  .call(d3.behavior.drag()
+        .on("drag", function(d) {
+          d3.select(this)
+          .attr("cx", function(d) {
+              if (d3.event.x < 0) {
+                return 0;
+              } else if (d3.event.x > 700) {
+                return 700;
+              } else {
+                return d3.event.x;
+              }
+
+            d3.event.x < 0 ? loc = 0 : loc = d3.event.x;
+            d3.event.x > 700 ? loc = 700 : loc = d3.event.x;
+            // if event is < 0 set to 0
+            // if event is > 700 set to 700
+            // return loc; 
+          })
+          .attr("cy", d3.event.y);
+        }));
 
 /****************** ADD ENEMIES TO THE BOARD **********************/
 
