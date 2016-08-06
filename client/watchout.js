@@ -142,14 +142,14 @@ d3.select(".enemy").selectAll("circle")
 
 /******************* BOUNCING ENEMIES ******************************/
 
-function updatePosition(enemiesArray) {
+var updatePosition = function (enemiesArray) {
   d3.selectAll("circle")
     .data(enemiesArray, function(d) { return d.id; })
     .transition()
     .duration(1000)
     .attr('cx', function(d) { return d.x = Math.random() * gameOptions.width; })
     .attr('cy', function(d) { return d.y = Math.random() * gameOptions.height; });
-}
+};
 
 setInterval(function () {
   updatePosition(enemiesArray);
