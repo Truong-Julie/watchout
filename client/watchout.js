@@ -36,12 +36,12 @@ var updateHighScore = function (score) {
   .text(score);
 };
 
-
 // Using a enemy class -> create a bunch of enemies
 var Enemy = function(id) {
   this.id = id;
   this.x = Math.random() * gameOptions.width;
   this.y = Math.random() * gameOptions.height;
+  this.r = 5;
 };
 
 var Player = function () {
@@ -51,6 +51,7 @@ var Player = function () {
   this.angle = 0;
   this.r = 5;
 };
+
 
 
 
@@ -90,14 +91,13 @@ d3.selectAll(".mouse").selectAll("circle")
   // .attr('d', function(d) { return d.path; })
   // .attr('view-box', function(d) { return d.x+d.y 0 0});
   .attr('cx', function(d) { return d.x; })
-  .attr('cy', function(d) { return d.y; });
+  .attr('cy', function(d) { return d.y; })
+  .attr('r', function(d) { return d.r; });
   // .attr("transform", "translate ( 350, 400 )" )
   // .attr("transform", function(d) { return "translate (" + [d.x, d.y] + ")"; })
   // .call(drag);
 // ;
 
-// DRAG FUNCTION
-// d3.select(".mouse").select("circle").call()
 
 d3.selectAll(".mouse").selectAll("circle")
   .call(d3.behavior.drag()
@@ -138,7 +138,8 @@ d3.select(".enemy").selectAll("circle")
   .enter()
   .append("circle")
   .attr('cx', function(d) { return d.x;} )
-  .attr('cy', function(d) { return d.y;} );
+  .attr('cy', function(d) { return d.y;} )
+  .attr('r', function(d) { return d.r;} );
 
 /******************* BOUNCING ENEMIES ******************************/
 
@@ -147,30 +148,56 @@ var updatePosition = function (enemiesArray) {
     .data(enemiesArray, function(d) { return d.id; })
     .transition()
     .duration(1000)
-    .attr('cx', function(d) { return d.x = Math.random() * gameOptions.width; })
+    .attr('cx', function(d, i) { return d.x  = Math.random() * gameOptions.width; })
     .attr('cy', function(d) { return d.y = Math.random() * gameOptions.height; });
 };
+
+
+
+//make a function that detects collision 
+
+var onCollision = function () {
+  // store current store
+  var currentScore = gameStats.score;
+  if (currentScore > gameStats.highScore) {
+    gameStats.highScore = currentScore;
+  }
+  gameStats.score = 0;
+};
+
+var checkCollision = function () {
+  var player = mouseArray[0];
+  var radiusSum = player.r + enemiesArray[0].r;
+  var distances = [];
+  for (var i = 0; i < enemiesArray.length; i++) {
+    var xDiff = enemiesArray[i].x - player.x; 
+    var yDiff = enemiesArray[i].y - player.y;
+    distances.push(Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) ));
+  }
+
+  for (var i = 0; distances.length; i++) {
+    if (distances[i] < radiusSum) {
+      onCollision();
+    }
+  } 
+};
+
 
 setInterval(function () {
   updatePosition(enemiesArray);
 }, 1000);
 
+setInterval(function () {
+  gameStats.score++;
+  updateCurrentScore(gameStats.score);
+}, 100);
 
-// d3.select("body").select(".board").selectAll("div")
-//   .data(nEnemies, function (d) { return d; })
-//   .enter()
-//   .append("div")
-//   .text(function (d) { return d; });
+// radiusSum = player r + enemy r
+// Distance = sqrt (playerR^2 + enemyR^2)
+// if that any time if the dis btw player and enemy is less than rSum
 
-// d3.select("body").select(".board").select("svg").selectAll("circle")
-//   // .data(nEnemies, function(d) {return d;})
-//   .data([1])
-//   .enter()
-//   .append("circle")
-//   .attr("cx", "25")
-//   .attr("cy", "25")
-//   .attr("r", "22");
+//
 
-// var Enemies = function () {
 
-// }
+
+
