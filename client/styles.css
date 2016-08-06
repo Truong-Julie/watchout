@@ -14,3 +14,7 @@ circle {
   r:5px;
   fill: blue;
 }
+
+.mouse circle {
+  fill: orange;
+}

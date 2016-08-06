@@ -46,7 +46,7 @@ var Enemy = function(id) {
 
 var Player = function () {
   this.path = 'm-7.5,1.62413c0,-5.04095 4.08318,-9.12413 9.12414,-9.12413c5.04096,0 9.70345,5.53145 11.87586,9.12413c-2.02759,2.72372 -6.8349,9.12415 -11.87586,9.12415c-5.04096,0 -9.12414,-4.08318 -9.12414,-9.12415z';
-  this.fill = '#ff6600';
+  this.fill = 'orange';
   this.x = gameOptions.width * 0.5;
   this.y = gameOptions.height * 0.5;
   this.angle = 0;
@@ -56,10 +56,16 @@ var Player = function () {
 
 
 /****************** ADD PLAYER TO THE BOARD ***********************/
+var mouseArray = [new Player ()];
+// console.log(mouse);
 
-var mouse = new Player ();
-
-d3.selectAll(".mouse");
+d3.selectAll(".mouse").selectAll("circle")
+  .data(mouseArray)
+  .enter()
+  .append("circle")
+  .attr('cx', function(d) { return d.x; })
+  .attr('cy', function(d) { return d.y; });
+// ;
 
   
 
