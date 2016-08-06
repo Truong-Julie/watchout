@@ -53,7 +53,7 @@ for (var i = 0; i < gameOptions.nEnemies; i++) {
 }
 // push to enemies array
 
-console.log(enemiesArray);
+
 // use d3 to add enemies as svg circles to the dom
 d3.select("body").select(".board").select("svg").selectAll("circle")
   .data(enemiesArray, function(d) { return d.id; })
@@ -62,6 +62,29 @@ d3.select("body").select(".board").select("svg").selectAll("circle")
   .attr('cx', function(d) { return d.x;} )
   .attr('cy', function(d) { return d.y;} );
 
+function updatePosition(enemiesArray) {
+  d3.selectAll("circle")
+    .data(enemiesArray, function(d) { return d.id; })
+    .enter()
+    .append()
+    .transition()
+    .duration(100)
+    .attr('cx', function(d) { return d.x = Math.random() * gameOptions.width; })
+    .attr('cy', function(d) { return d.y = Math.random() * gameOptions.height; });
+}
+
+
+setInterval(function () {
+  updatePosition(enemiesArray);
+}, 100);
+
+d3.interval(function () {
+  updatePosition(enemiesArray);
+}, 0, 100);
+updatePosition(enemiesArray);
+d3.interval(function() {
+  updatePosition(enemiesArray);
+}, 100);
 
 var Player = function () {
   this.path = 'm-7.5,1.62413c0,-5.04095 4.08318,-9.12413 9.12414,-9.12413c5.04096,0 9.70345,5.53145 11.87586,9.12413c-2.02759,2.72372 -6.8349,9.12415 -11.87586,9.12415c-5.04096,0 -9.12414,-4.08318 -9.12414,-9.12415z';
