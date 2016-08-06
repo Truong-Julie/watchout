@@ -2,8 +2,8 @@
 var nEnemies = [30, 40, 50];
 
 var gameOptions = {
-  height: 450,
-  width: 700,
+  height: 500,
+  width: 800,
   nEnemies: 30,
   padding: 20
 };
@@ -106,20 +106,23 @@ d3.selectAll(".mouse").selectAll("circle")
           .attr("cx", function(d) {
               if (d3.event.x < 0) {
                 return 0;
-              } else if (d3.event.x > 700) {
-                return 700;
+              } else if (d3.event.x > gameOptions.width) {
+                return gameOptions.width;
               } else {
                 return d3.event.x;
               }
-
-            d3.event.x < 0 ? loc = 0 : loc = d3.event.x;
-            d3.event.x > 700 ? loc = 700 : loc = d3.event.x;
-            // if event is < 0 set to 0
-            // if event is > 700 set to 700
-            // return loc; 
           })
-          .attr("cy", d3.event.y);
-        }));
+          .attr("cy", function(d) {
+            if (d3.event.y < 0) {
+              return 0;
+            } else if (d3.event.y > gameOptions.height) {
+              return gameOptions.height;
+            } else {
+              return d3.event.y;
+            }
+          });
+        })
+  );
 
 /****************** ADD ENEMIES TO THE BOARD **********************/
 
