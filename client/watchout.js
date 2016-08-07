@@ -164,36 +164,48 @@ var updatePosition = function (enemiesArray) {
 
 //make a function that detects collision 
 
-var onCollision = function () {
-  // store current store
-  var currentScore = gameStats.score;
-  if (currentScore > gameStats.highScore) {
-    gameStats.highScore = currentScore;
-    updateHighScore(gameStats.highScore);
-    
-    // console.log(gameStats.collision);
-  }
-//  gameStats.collision++;
-//  updateCollision(gameStats.collision);
-  gameStats.score = 0;
-};
+// var onCollision = function () {
+//   gameStats.score = 0;
+// };
 
 var checkCollision = function () {
   var player = mouseArray[0];
   var radiusSum = player.r + enemiesArray[0].r;
-  
-  // var distances = [];
+  var currentScore = gameStats.score;
+  if (currentScore > gameStats.highScore) {
+    gameStats.highScore = currentScore;
+    updateHighScore(gameStats.highScore);
+  }
   d3.select(".enemy").selectAll("circle")
     .each(function() {
       var xDiff = this.cx.baseVal.value - player.x; 
-    // console.log(xDiff);
       var yDiff = this.cy.baseVal.value - player.y;
       var distance = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) );
       if (distance < radiusSum) {
-        //console.log('hit!');
-        onCollision();
+        gameStats.score = 0;
       }
     });
+
+  // d3.select(".enemy").selectAll("circle")
+  //   .data(enemiesArray)
+  //   .each(function (d) {
+  //     console.log(d);
+  //     var xDiff = this.cx - player.x;
+  //     var yDiff = this.cy - player.y;
+  //     var distance = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) );
+  //     if (distance < radiusSum) {
+  //       gameStats.score = 0;
+  //     }
+  //   });
+    // .each(function() {
+    //   var xDiff = this.cx.baseVal.value - player.x; 
+    //   var yDiff = this.cy.baseVal.value - player.y;
+    //   var distance = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) );
+    //   if (distance < radiusSum) {
+    //     gameStats.score = 0;
+    //   }
+    // });
+};
 
   // for (var i = 0; i < enemiesArray.length; i++) {
   //   var xDiff = enemiesArray[i].x - player.x; 
@@ -212,7 +224,6 @@ var checkCollision = function () {
 
   // for (var i = 0; distances.length; i++) {
   // } 
-};
 
 // d3.selectAll(".enemy")
 //   .data(enemiesArray)
