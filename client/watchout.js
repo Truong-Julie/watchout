@@ -10,7 +10,8 @@ var gameOptions = {
 
 var gameStats = {
   score: 0,
-  highScore: 0
+  highScore: 0,
+  collision: 0
 };
 
 // function to generate a coordinate based on the limits of the board
@@ -36,6 +37,10 @@ var updateHighScore = function (score) {
   .text(score);
 };
 
+// var updateCollision = function (count) {
+//   d3.select(".collisions").select("span")
+//   .text(count);
+// };
 // Using a enemy class -> create a bunch of enemies
 var Enemy = function(id) {
   this.id = id;
@@ -104,21 +109,22 @@ d3.selectAll(".mouse").selectAll("circle")
         .on("drag", function(d) {
           d3.select(this)
           .attr("cx", function(d) {
+            //var pointer = d3.event.x;
               if (d3.event.x < 0) {
-                return 0;
+                return d.x = 0;
               } else if (d3.event.x > gameOptions.width) {
-                return gameOptions.width;
+                return d.x = gameOptions.width;
               } else {
-                return d3.event.x;
+                return d.x = d3.event.x;
               }
           })
           .attr("cy", function(d) {
             if (d3.event.y < 0) {
-              return 0;
+              return d.y = 0;
             } else if (d3.event.y > gameOptions.height) {
-              return gameOptions.height;
+              return d.y = gameOptions.height;
             } else {
-              return d3.event.y;
+              return d.y = d3.event.y;
             }
           });
         })
@@ -150,6 +156,8 @@ var updatePosition = function (enemiesArray) {
     .duration(1000)
     .attr('cx', function(d, i) { return d.x  = Math.random() * gameOptions.width; })
     .attr('cy', function(d) { return d.y = Math.random() * gameOptions.height; });
+    // .attr('cx', function(d, i) { return d.x = 10; })
+    // .attr('cy', function(d) { return d.y = 10; });
 };
 
 
@@ -161,35 +169,69 @@ var onCollision = function () {
   var currentScore = gameStats.score;
   if (currentScore > gameStats.highScore) {
     gameStats.highScore = currentScore;
+    updateHighScore(gameStats.highScore);
+    
+    // console.log(gameStats.collision);
   }
+//  gameStats.collision++;
+//  updateCollision(gameStats.collision);
   gameStats.score = 0;
 };
 
 var checkCollision = function () {
   var player = mouseArray[0];
   var radiusSum = player.r + enemiesArray[0].r;
-  var distances = [];
-  for (var i = 0; i < enemiesArray.length; i++) {
-    var xDiff = enemiesArray[i].x - player.x; 
-    var yDiff = enemiesArray[i].y - player.y;
-    distances.push(Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) ));
-  }
+  
+  // var distances = [];
+  d3.select(".enemy").selectAll("circle")
+    .each(function() {
+      var xDiff = this.cx.baseVal.value - player.x; 
+    // console.log(xDiff);
+      var yDiff = this.cy.baseVal.value - player.y;
+      var distance = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) );
+      if (distance < radiusSum) {
+        //console.log('hit!');
+        onCollision();
+      }
+    });
 
-  for (var i = 0; distances.length; i++) {
-    if (distances[i] < radiusSum) {
-      onCollision();
-    }
-  } 
+  // for (var i = 0; i < enemiesArray.length; i++) {
+  //   var xDiff = enemiesArray[i].x - player.x; 
+  //   // console.log(xDiff);
+  //   var yDiff = enemiesArray[i].y - player.y;
+  //   var distance = Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) );
+  //   // distances.push(Math.sqrt( Math.pow(xDiff, 2) + Math.pow(yDiff, 2) ));
+  //   //console.log("distance", distance);
+  //   // console.log("radius Sum", radiusSum);
+  //   if (distance < radiusSum) {
+  //     console.log('hit!');
+  //     onCollision();
+  //   }
+
+  // }
+
+  // for (var i = 0; distances.length; i++) {
+  // } 
 };
 
+// d3.selectAll(".enemy")
+//   .data(enemiesArray)
+//   .
 
 setInterval(function () {
   updatePosition(enemiesArray);
+  // checkCollision();
 }, 1000);
 
 setInterval(function () {
   gameStats.score++;
   updateCurrentScore(gameStats.score);
+}, 100);
+
+// checkCollision();
+
+setInterval(function () { 
+  checkCollision();
 }, 100);
 
 // radiusSum = player r + enemy r
